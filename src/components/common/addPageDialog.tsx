@@ -1,25 +1,4 @@
-import { useWordCollection } from "@/contexts/wordCollection"
 import type { Word } from "@/types/wordCollection"
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from "@dnd-kit/core"
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
-import { GripVertical, ListPlus, Palette, Trash2 } from "lucide-react"
-import { useCallback, useState } from "react"
-import { v4 as uuidv4 } from "uuid"
 import { Button } from "../ui/button"
 import {
   Dialog,
@@ -31,6 +10,27 @@ import {
 } from "../ui/dialog"
 import { Field, FieldGroup, FieldLabel, FieldSet } from "../ui/field"
 import { Input } from "../ui/input"
+import { useState, useCallback } from "react"
+import { Trash2, GripVertical, Palette, ListPlus, FilePlus } from "lucide-react"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import { useWordCollection } from "@/contexts/wordCollection"
+import { v4 as uuidv4 } from "uuid"
 
 interface SortableItemProps {
   word: Word
@@ -139,7 +139,7 @@ function SortableItem({
   )
 }
 
-function AddCollectionDialog() {
+function AddPageDialog() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [collectionName, setCollectionName] = useState<string>("")
   const [collectionDescription, setCollectionDescription] = useState<string>("")
@@ -265,14 +265,14 @@ function AddCollectionDialog() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant='outline'>
-          <ListPlus className='size-4' />
-          <span>چندتایی</span>
+          <FilePlus className='size-4' />
+          <span>صفحه</span>
         </Button>
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>ایجاد چندتایی جدید</DialogTitle>
+          <DialogTitle>ایجاد صفحه جدید</DialogTitle>
         </DialogHeader>
 
         <FieldGroup>
@@ -283,6 +283,7 @@ function AddCollectionDialog() {
                 <FieldLabel>عنوان</FieldLabel>
                 <Input
                   placeholder='عنوان چندتایی'
+                  required
                   value={collectionName}
                   onChange={e => setCollectionName(e.target.value)}
                 />
@@ -294,6 +295,7 @@ function AddCollectionDialog() {
                   <FieldLabel>توضیحات</FieldLabel>
                   <Input
                     placeholder='توضیحات'
+                    required
                     value={collectionDescription}
                     onChange={e => setCollectionDescription(e.target.value)}
                   />
@@ -358,4 +360,4 @@ function AddCollectionDialog() {
   )
 }
 
-export default AddCollectionDialog
+export default AddPageDialog

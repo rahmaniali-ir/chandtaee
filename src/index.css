@@ -118,14 +118,22 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    direction: rtl;
+  }
+
+  html,
+  body {
+    min-height: 100vh;
+  }
+
   body {
     @apply bg-background text-foreground;
+    display: flex;
+    flex-direction: column;
     font-family: "YekanBakh", -apple-system, BlinkMacSystemFont, "Segoe UI",
       "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
       "Helvetica Neue", sans-serif;
   }
-}
-
-html {
-  direction: rtl;
 }

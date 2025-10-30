@@ -8,8 +8,8 @@ export interface Word {
 
 export interface Collection {
   id: string
-  name: string
   words: Word[]
+  name?: string
   description?: string
 }
 

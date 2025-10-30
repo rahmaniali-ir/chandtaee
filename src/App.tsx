@@ -1,5 +1,5 @@
 import "./App.css"
-import AddCollectionDialog from "./components/common/addCollectionDialog"
+import Navbar from "./components/layout/navbar"
 import { WordCollectionProvider } from "./contexts/wordCollection"
 import AppRoutes from "./routes"
 
@@ -7,15 +7,9 @@ function App() {
   return (
     <>
       <WordCollectionProvider>
-        <div className='flex flex-col gap-4'>
-          <nav className='flex items-center gap-4'>
-            <strong>چندتایی</strong>
+        <Navbar />
 
-            <AddCollectionDialog />
-          </nav>
-
-          <AppRoutes />
-        </div>
+        <AppRoutes />
       </WordCollectionProvider>
     </>
   )
