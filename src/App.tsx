@@ -9,7 +9,7 @@ function App() {
       <WordCollectionProvider>
         <Navbar />
 
-        <main className='flex flex-col px-2'>
+        <main className='flex flex-col px-2 pb-8'>
           <AppRoutes />
         </main>
       </WordCollectionProvider>

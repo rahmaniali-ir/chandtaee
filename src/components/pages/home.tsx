@@ -17,7 +17,9 @@ function Home() {
     <>
       <div className='flex flex-col items-start gap-2'>
         <div className='flex items-center gap-2'>
-          <h2 className='font-light text-neutral-700'>صفحات</h2>
+          <h2 className='font-light text-neutral-700'>
+            صفحات ({pages.length})
+          </h2>
 
           {pages.length > MAX_LIST_LENGTH && (
             <Link to='/pages'>
@@ -50,7 +52,9 @@ function Home() {
 
       <div className='flex flex-col items-start gap-2 mt-8'>
         <div className='flex items-center gap-2'>
-          <h2 className='font-light text-neutral-700'>چندتایی ها</h2>
+          <h2 className='font-light text-neutral-700'>
+            چندتایی ها ({collections.length})
+          </h2>
 
           {collections.length > MAX_LIST_LENGTH && (
             <Link to='/collections'>

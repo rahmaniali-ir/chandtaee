@@ -17,8 +17,14 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { GripVertical, ListPlus, Palette, Trash2 } from "lucide-react"
-import { useCallback, useState } from "react"
+import {
+  ArrowUpDown,
+  GripVertical,
+  ListPlus,
+  Palette,
+  Trash2,
+} from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { Button } from "../ui/button"
 import {
@@ -129,7 +135,7 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
   const [collectionName, setCollectionName] = useState<string>("")
   const [collectionDescription, setCollectionDescription] = useState<string>("")
   const [collectionColor, setCollectionColor] = useState<string>()
-  const [words, setWords] = useState<Word[]>([{ id: "1", value: "" }])
+  const [words, setWords] = useState<Word[]>([{ id: uuidv4(), value: "" }])
   const [collectionIcon, setCollectionIcon] = useState<string>()
 
   const { addCollection } = useWordCollection()
@@ -211,6 +217,13 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
     )
   }, [])
 
+  const handleReverseWords = () => {
+    setWords(prevWords => {
+      prevWords.reverse()
+      return prevWords
+    })
+  }
+
   const resetForm = () => {
     setCollectionName("")
     setCollectionDescription("")
@@ -232,6 +245,10 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
     setIsOpen(false)
     resetForm()
   }
+
+  useEffect(() => {
+    setWords([{ id: uuidv4(), value: "" }])
+  }, [isOpen])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -287,7 +304,18 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
 
               {/* items */}
               <Field>
-                <FieldLabel>گزینه ها</FieldLabel>
+                <div className='flex items-center gap-2'>
+                  <strong className='font-normal text-sm'>گزینه ها</strong>
+
+                  <Button
+                    onClick={handleReverseWords}
+                    variant='ghost'
+                    size='icon'
+                    className='ms-auto'
+                  >
+                    <ArrowUpDown className='size-4' />
+                  </Button>
+                </div>
 
                 <DndContext
                   sensors={sensors}

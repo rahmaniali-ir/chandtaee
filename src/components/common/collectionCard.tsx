@@ -11,7 +11,7 @@ function CollectionCard({ collection }: { collection: Collection }) {
   const hasHeader = collection.name || collection.description || collection.icon
 
   return (
-    <Card>
+    <Card className='gap-2 py-3'>
       {hasHeader && (
         <CardHeader
           style={{
@@ -22,7 +22,9 @@ function CollectionCard({ collection }: { collection: Collection }) {
           {collection.icon && (
             <span className='text-xl'>{collection.icon}</span>
           )}
+
           {collection.name && <CardTitle>{collection.name}</CardTitle>}
+
           {collection.description && (
             <CardDescription>{collection.description}</CardDescription>
           )}
@@ -34,8 +36,13 @@ function CollectionCard({ collection }: { collection: Collection }) {
           {collection.words.map((word, index) => (
             <div
               key={word.id}
-              style={{ color: word.color }}
-              className='flex items-center gap-2 bg-neutral-50 p-2 rounded-md'
+              style={{
+                color: word.color,
+                border: collection.color
+                  ? `1px solid ${collection.color}`
+                  : undefined,
+              }}
+              className='flex text-sm items-center gap-2 bg-neutral-50 p-2 rounded-md'
             >
               <span className='text-xs text-neutral-400'>{index + 1}.</span>
 
