@@ -11,6 +11,8 @@ export interface Collection {
   words: Word[]
   name?: string
   description?: string
+  color?: string
+  icon?: string
 }
 
 export interface Page {

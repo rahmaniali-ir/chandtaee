@@ -1,11 +1,9 @@
+import { useWordCollection } from "@/contexts/wordCollection"
 import { CloudDownload, CloudUpload, NotebookTabs, Search } from "lucide-react"
-import AddCollectionDialog from "../common/addCollectionDialog"
-import AddPageDialog from "../common/addPageDialog"
-import { Input } from "../ui/input"
+import { useRef } from "react"
 import { Link } from "react-router"
 import { Button } from "../ui/button"
-import { useWordCollection } from "@/contexts/wordCollection"
-import { useRef } from "react"
+import { Input } from "../ui/input"
 
 function Navbar() {
   const { downloadDB, uploadDB } = useWordCollection()
@@ -19,7 +17,7 @@ function Navbar() {
   }
 
   return (
-    <nav className='flex items-center gap-4 px-2 md:px-0 py-4'>
+    <nav className='flex items-center gap-4 px-2 py-4'>
       <Link
         to='/'
         className='flex items-center gap-1 text-neutral-500 transition-colors hover:text-neutral-700'
@@ -35,12 +33,6 @@ function Navbar() {
 
           <Input placeholder='جستجو' className='w-full ps-8' />
         </div>
-      </div>
-
-      <div className='flex items-center gap-2'>
-        <AddCollectionDialog />
-
-        <AddPageDialog />
       </div>
 
       <div className='flex items-center gap-2 ms-auto'>

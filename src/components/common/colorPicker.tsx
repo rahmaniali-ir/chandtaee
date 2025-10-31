@@ -5,9 +5,11 @@ import { useRef } from "react"
 
 function ColorPicker({
   value,
+  disabled,
   onChange,
 }: {
   value?: string
+  disabled?: boolean
   onChange: (color?: string) => void
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -16,16 +18,18 @@ function ColorPicker({
     <Button
       variant='ghost'
       size='icon'
-      onClick={() => inputRef.current?.click()}
+      disabled={disabled}
+      onClick={() => !disabled && inputRef.current?.click()}
       onContextMenu={e => {
+        if (disabled) return
+
         e.preventDefault()
         onChange(undefined) // Clear color
       }}
       className={cn(
-        "relative",
-        value &&
-          "text-current-500 bg-current/10 hover:text-current-700 hover:bg-current/25",
-        !value && "text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50"
+        "relative size-[1em] rounded-full border-2 border-background shadow-lg hover:scale-110",
+        value && "!bg-current",
+        !value && "!bg-neutral-400"
       )}
       style={value ? { color: value } : {}}
     >
@@ -34,10 +38,8 @@ function ColorPicker({
         value={value}
         onInput={e => onChange((e.target as HTMLInputElement).value)}
         type='color'
-        className='absolute opacity-0 top-full left-0 size-0'
+        className='invisible absolute opacity-0 top-full left-0 size-0'
       />
-
-      <Palette className='size-4' />
     </Button>
   )
 }

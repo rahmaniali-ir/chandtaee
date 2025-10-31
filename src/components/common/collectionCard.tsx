@@ -8,12 +8,20 @@ import {
 } from "../ui/card"
 
 function CollectionCard({ collection }: { collection: Collection }) {
-  const hasHeader = collection.name || collection.description
+  const hasHeader = collection.name || collection.description || collection.icon
 
   return (
     <Card>
       {hasHeader && (
-        <CardHeader>
+        <CardHeader
+          style={{
+            color: collection.color,
+          }}
+          className='flex items-center gap-2 px-3'
+        >
+          {collection.icon && (
+            <span className='text-xl'>{collection.icon}</span>
+          )}
           {collection.name && <CardTitle>{collection.name}</CardTitle>}
           {collection.description && (
             <CardDescription>{collection.description}</CardDescription>
@@ -26,9 +34,13 @@ function CollectionCard({ collection }: { collection: Collection }) {
           {collection.words.map((word, index) => (
             <div
               key={word.id}
+              style={{ color: word.color }}
               className='flex items-center gap-2 bg-neutral-50 p-2 rounded-md'
             >
               <span className='text-xs text-neutral-400'>{index + 1}.</span>
+
+              {word.icon && <span>{word.icon}</span>}
+
               <span>{word.value}</span>
             </div>
           ))}

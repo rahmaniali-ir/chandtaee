@@ -9,7 +9,9 @@ function App() {
       <WordCollectionProvider>
         <Navbar />
 
-        <AppRoutes />
+        <main className='flex flex-col px-2'>
+          <AppRoutes />
+        </main>
       </WordCollectionProvider>
     </>
   )

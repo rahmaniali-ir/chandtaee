@@ -32,19 +32,24 @@ import {
 import { Field, FieldGroup, FieldLabel, FieldSet } from "../ui/field"
 import { Input } from "../ui/input"
 import ColorPicker from "./colorPicker"
+import EmojiPicker from "./emojiPicker"
 
 interface SortableItemProps {
+  index: number
   word: Word
   onUpdate: (id: string, name: string) => void
   onDelete: (id: string) => void
   onColorChange: (id: string, color?: string) => void
+  onIconChange: (id: string, icon?: string) => void
 }
 
 function SortableItem({
+  index,
   word,
   onUpdate,
   onDelete,
   onColorChange,
+  onIconChange,
 }: SortableItemProps) {
   const {
     attributes,
@@ -83,49 +88,49 @@ function SortableItem({
 
       {isEmpty && (
         <div className='p-1 w-6'>
-          <div className='size-4' />
+          <GripVertical className='size-4 text-gray-200' />
         </div>
       )}
 
+      <EmojiPicker
+        disabled={isEmpty}
+        onEmojiSelect={e => onIconChange(word.id, e)}
+      />
+
       <Input
-        placeholder='گزینه'
+        placeholder={(index + 1).toString()}
+        className='flex-1'
         value={word.value}
         onChange={e => onUpdate(word.id, e.target.value)}
-        className='flex-1'
         style={word.color ? { borderColor: word.color } : {}}
       />
 
-      {!isEmpty && (
-        <ColorPicker
-          value={word.color}
-          onChange={color => onColorChange(word.id, color)}
-        />
-      )}
+      <ColorPicker
+        disabled={isEmpty}
+        value={word.color}
+        onChange={color => onColorChange(word.id, color)}
+      />
 
-      {isEmpty && <div className='w-10' />}
-
-      {!isEmpty && (
-        <Button
-          variant='ghost'
-          size='icon'
-          onClick={() => onDelete(word.id)}
-          className='text-red-500 hover:text-red-700 hover:bg-red-50'
-        >
-          <Trash2 className='size-4' />
-        </Button>
-      )}
-
-      {isEmpty && <div className='w-10' />}
+      <Button
+        variant='ghost'
+        size='icon'
+        className='text-red-500 hover:text-red-700 hover:bg-red-50'
+        disabled={isEmpty}
+        onClick={() => onDelete(word.id)}
+      >
+        <Trash2 className='size-4' />
+      </Button>
     </div>
   )
 }
 
-function AddCollectionDialog() {
+function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [collectionName, setCollectionName] = useState<string>("")
   const [collectionDescription, setCollectionDescription] = useState<string>("")
   const [collectionColor, setCollectionColor] = useState<string>()
   const [words, setWords] = useState<Word[]>([{ id: "1", value: "" }])
+  const [collectionIcon, setCollectionIcon] = useState<string>()
 
   const { addCollection } = useWordCollection()
 
@@ -194,9 +199,15 @@ function AddCollectionDialog() {
     })
   }, [])
 
-  const handleColorChange = useCallback((id: string, color?: string) => {
+  const handleWordColorChange = useCallback((id: string, color?: string) => {
     setWords(prevWords =>
       prevWords.map(word => (word.id === id ? { ...word, color } : word))
+    )
+  }, [])
+
+  const handleWordIconChange = useCallback((id: string, icon?: string) => {
+    setWords(prevWords =>
+      prevWords.map(word => (word.id === id ? { ...word, icon } : word))
     )
   }, [])
 
@@ -204,6 +215,7 @@ function AddCollectionDialog() {
     setCollectionName("")
     setCollectionDescription("")
     setCollectionColor("")
+    setCollectionIcon(undefined)
     setWords([{ id: uuidv4(), value: "" }])
   }
 
@@ -213,6 +225,8 @@ function AddCollectionDialog() {
       name: collectionName,
       description: collectionDescription,
       words: words.filter(word => word.value.trim() !== ""), // Only include non-empty words
+      icon: collectionIcon,
+      color: collectionColor,
     })
 
     setIsOpen(false)
@@ -222,10 +236,12 @@ function AddCollectionDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline'>
-          <ListPlus className='size-4' />
-          <span>چندتایی</span>
-        </Button>
+        {children || (
+          <Button variant='outline'>
+            <ListPlus className='size-4' />
+            <span>چندتایی</span>
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent>
@@ -236,35 +252,37 @@ function AddCollectionDialog() {
         <FieldGroup>
           <FieldSet>
             <FieldGroup>
-              {/* name */}
-              <Field>
-                <FieldLabel>عنوان</FieldLabel>
-                <Input
-                  placeholder='عنوان چندتایی'
-                  value={collectionName}
-                  onChange={e => setCollectionName(e.target.value)}
+              <div className='flex items-center gap-4 -mx-2'>
+                <EmojiPicker
+                  onEmojiSelect={e => setCollectionIcon(e)}
+                  className='flex items-center justify-center size-14 bg-neutral-50 text-xl'
                 />
-              </Field>
 
-              <div className='flex gap-2'>
-                {/* description */}
-                <Field>
-                  <FieldLabel>توضیحات</FieldLabel>
+                <div className='flex flex-col'>
                   <Input
-                    placeholder='توضیحات'
-                    value={collectionDescription}
-                    onChange={e => setCollectionDescription(e.target.value)}
+                    placeholder='عنوان چندتایی'
+                    value={collectionName}
+                    onChange={e => setCollectionName(e.target.value)}
+                    className='flex-1'
+                    variant='plain'
                   />
-                </Field>
 
-                {/* color */}
-                <Field>
-                  <FieldLabel>رنگ</FieldLabel>
-                  <ColorPicker
-                    value={collectionColor}
-                    onChange={color => setCollectionColor(color)}
-                  />
-                </Field>
+                  <div className='flex items-center gap-2'>
+                    <ColorPicker
+                      value={collectionColor}
+                      onChange={color => setCollectionColor(color)}
+                    />
+
+                    {/* description */}
+                    <Input
+                      placeholder='توضیحات'
+                      variant='plain'
+                      className='!text-xs !py-0'
+                      value={collectionDescription}
+                      onChange={e => setCollectionDescription(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* items */}
@@ -283,13 +301,15 @@ function AddCollectionDialog() {
                     strategy={verticalListSortingStrategy}
                   >
                     <div className='flex flex-col gap-2'>
-                      {words.map(word => (
+                      {words.map((word, index) => (
                         <SortableItem
                           key={word.id}
+                          index={index}
                           word={word}
                           onUpdate={handleWordUpdate}
                           onDelete={handleWordDelete}
-                          onColorChange={handleColorChange}
+                          onColorChange={handleWordColorChange}
+                          onIconChange={handleWordIconChange}
                         />
                       ))}
                     </div>

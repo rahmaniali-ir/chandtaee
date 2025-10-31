@@ -120,7 +120,7 @@ function SortableItem({
   )
 }
 
-function AddPageDialog() {
+function AddPageDialog({ children }: { children?: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [collectionName, setCollectionName] = useState<string>("")
   const [collectionDescription, setCollectionDescription] = useState<string>("")
@@ -222,10 +222,12 @@ function AddPageDialog() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline'>
-          <FilePlus className='size-4' />
-          <span>صفحه</span>
-        </Button>
+        {children || (
+          <Button variant='outline'>
+            <FilePlus className='size-4' />
+            <span>صفحه</span>
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent>
