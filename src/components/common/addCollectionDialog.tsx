@@ -31,12 +31,13 @@ import {
 } from "../ui/dialog"
 import { Field, FieldGroup, FieldLabel, FieldSet } from "../ui/field"
 import { Input } from "../ui/input"
+import ColorPicker from "./colorPicker"
 
 interface SortableItemProps {
   word: Word
   onUpdate: (id: string, name: string) => void
   onDelete: (id: string) => void
-  onColorChange: (id: string, clear?: boolean) => void
+  onColorChange: (id: string, color?: string) => void
 }
 
 function SortableItem({
@@ -63,8 +64,6 @@ function SortableItem({
   }
 
   const isEmpty = word.value.trim() === ""
-
-  const isColorful = !!word.color
 
   return (
     <div
@@ -97,28 +96,10 @@ function SortableItem({
       />
 
       {!isEmpty && (
-        <Button
-          variant='ghost'
-          size='icon'
-          onClick={() => onColorChange(word.id)}
-          onContextMenu={e => {
-            e.preventDefault()
-            onColorChange(word.id, true) // Clear color
-          }}
-          className={`${
-            isColorful
-              ? "text-current-500 hover:text-current-700 hover:bg-current-50"
-              : "text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50"
-          }`}
-          style={word.color ? { color: word.color } : {}}
-          title={
-            isColorful
-              ? "Click to change color, right-click to remove"
-              : "Click to set color"
-          }
-        >
-          <Palette className='size-4' />
-        </Button>
+        <ColorPicker
+          value={word.color}
+          onChange={color => onColorChange(word.id, color)}
+        />
       )}
 
       {isEmpty && <div className='w-10' />}
@@ -143,7 +124,7 @@ function AddCollectionDialog() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [collectionName, setCollectionName] = useState<string>("")
   const [collectionDescription, setCollectionDescription] = useState<string>("")
-  const [collectionColor, setCollectionColor] = useState<string>("")
+  const [collectionColor, setCollectionColor] = useState<string>()
   const [words, setWords] = useState<Word[]>([{ id: "1", value: "" }])
 
   const { addCollection } = useWordCollection()
@@ -213,33 +194,10 @@ function AddCollectionDialog() {
     })
   }, [])
 
-  const handleColorChange = useCallback((id: string, clear = false) => {
-    if (clear) {
-      setWords(prevWords =>
-        prevWords.map(word =>
-          word.id === id ? { ...word, color: undefined } : word
-        )
-      )
-      return
-    }
-
-    // Create a temporary input element for color picking
-    const colorInput = document.createElement("input")
-    colorInput.type = "color"
-    colorInput.value = "#3b82f6" // Default blue color
-
-    colorInput.addEventListener("input", e => {
-      const target = e.target as HTMLInputElement
-      if (target.value) {
-        setWords(prevWords =>
-          prevWords.map(word =>
-            word.id === id ? { ...word, color: target.value } : word
-          )
-        )
-      }
-    })
-
-    colorInput.click()
+  const handleColorChange = useCallback((id: string, color?: string) => {
+    setWords(prevWords =>
+      prevWords.map(word => (word.id === id ? { ...word, color } : word))
+    )
   }, [])
 
   const resetForm = () => {
@@ -302,12 +260,9 @@ function AddCollectionDialog() {
                 {/* color */}
                 <Field>
                   <FieldLabel>رنگ</FieldLabel>
-                  <Input
-                    placeholder='رنگ'
-                    required
+                  <ColorPicker
                     value={collectionColor}
-                    onChange={e => setCollectionColor(e.target.value)}
-                    type='color'
+                    onChange={color => setCollectionColor(color)}
                   />
                 </Field>
               </div>
