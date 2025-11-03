@@ -8,7 +8,7 @@ import "./index.css"
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <DirectionProvider dir='rtl'>
-      <BrowserRouter>
+      <BrowserRouter basename='/chandtaee'>
         <App />
       </BrowserRouter>
     </DirectionProvider>
