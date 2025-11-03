@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { FilePlus, GripVertical, Palette, Trash2 } from "lucide-react"
+import { FilePlus, GripVertical, Trash2 } from "lucide-react"
 import { useCallback, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { Button } from "../ui/button"

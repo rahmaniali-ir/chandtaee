@@ -17,13 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import {
-  ArrowUpDown,
-  GripVertical,
-  ListPlus,
-  Palette,
-  Trash2,
-} from "lucide-react"
+import { ArrowUpDown, GripVertical, ListPlus, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { Button } from "../ui/button"
@@ -35,11 +29,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
-import { Field, FieldGroup, FieldLabel, FieldSet } from "../ui/field"
+import { Field, FieldGroup, FieldSet } from "../ui/field"
 import { Input } from "../ui/input"
 import ColorPicker from "./colorPicker"
 import EmojiPicker from "./emojiPicker"
-
 interface SortableItemProps {
   index: number
   word: Word
