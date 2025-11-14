@@ -6,7 +6,8 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 
 function Navbar() {
-  const { downloadDB, uploadDB } = useWordCollection()
+  const { downloadDB, uploadDB, searchQuery, setSearchQuery } =
+    useWordCollection()
 
   const uploadDBInputRef = useRef<HTMLInputElement>(null)
 
@@ -31,7 +32,12 @@ function Navbar() {
         <div className='relative'>
           <Search className='size-4 text-neutral-500 absolute right-2 top-1/2 -translate-y-1/2' />
 
-          <Input placeholder='جستجو' className='w-full ps-8' />
+          <Input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder='جستجو'
+            className='w-full ps-8'
+          />
         </div>
       </div>
 

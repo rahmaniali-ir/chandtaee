@@ -7,11 +7,18 @@ import PageCard from "../common/pageCard"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
 import AddPageDialog from "../common/addPageDialog"
+import { useEffect, useMemo } from "react"
 
 const MAX_LIST_LENGTH = 6
 
 function Home() {
-  const { pages, collections } = useWordCollection()
+  const { pages, collections, searchQuery, searchWord } = useWordCollection()
+
+  const filteredCollections = useMemo(() => {
+    if (searchQuery.trim().length === 0) return collections
+
+    return searchWord(searchQuery)
+  }, [collections, searchQuery])
 
   return (
     <>
@@ -79,7 +86,7 @@ function Home() {
             </Card>
           </AddCollectionDialog>
 
-          {collections.map(collection => (
+          {filteredCollections.map(collection => (
             <CollectionCard key={collection.id} collection={collection} />
           ))}
         </div>

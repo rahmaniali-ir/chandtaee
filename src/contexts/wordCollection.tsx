@@ -2,6 +2,9 @@ import type { Collection, Page } from "@/types/wordCollection"
 import { createContext, useContext, useState } from "react"
 
 const WordCollectionContext = createContext<{
+  searchQuery: string
+  setSearchQuery: (query: string) => void
+
   downloadDB: () => void
   uploadDB: (file: File) => void
 
@@ -15,6 +18,9 @@ const WordCollectionContext = createContext<{
   searchCollectionByName: (name: string) => Collection[]
   searchWord: (word: string) => Collection[]
 }>({
+  searchQuery: "",
+  setSearchQuery: () => {},
+
   downloadDB: () => {},
   uploadDB: () => {},
 
@@ -36,6 +42,7 @@ export const WordCollectionProvider = ({
 }) => {
   const [pages, setPages] = useState<Page[]>([])
   const [collections, setCollections] = useState<Collection[]>([])
+  const [searchQuery, setSearchQuery] = useState<string>("")
 
   const downloadDB = () => {
     const db = {
@@ -100,6 +107,10 @@ export const WordCollectionProvider = ({
     <div className='flex flex-col gap-4'>
       <WordCollectionContext.Provider
         value={{
+          // Search
+          searchQuery,
+          setSearchQuery,
+
           // Database
           downloadDB,
           uploadDB,
