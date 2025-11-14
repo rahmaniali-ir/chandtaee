@@ -1,7 +1,7 @@
 import data from "@emoji-mart/data"
 import Picker from "@emoji-mart/react"
 import { Smile } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "../ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 
@@ -20,6 +20,10 @@ function EmojiPicker({
 }) {
   const [value, setValue] = useState<string | undefined>(selected)
   const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    setValue(selected)
+  }, [selected])
 
   const handleEmojiSelect = (emoji: any) => {
     setValue(emoji.native)

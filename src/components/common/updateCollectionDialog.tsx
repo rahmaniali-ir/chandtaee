@@ -1,5 +1,5 @@
 import { useWordCollection } from "@/contexts/wordCollection"
-import type { Word } from "@/types/wordCollection"
+import type { Collection, Word } from "@/types/wordCollection"
 import {
   closestCenter,
   DndContext,
@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { ArrowUpDown, GripVertical, ListPlus, Trash2 } from "lucide-react"
+import { ArrowUpDown, GripVertical, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { Button } from "../ui/button"
@@ -27,12 +27,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog"
 import { Field, FieldGroup, FieldSet } from "../ui/field"
 import { Input } from "../ui/input"
 import ColorPicker from "./colorPicker"
 import EmojiPicker from "./emojiPicker"
+
 interface SortableItemProps {
   index: number
   word: Word
@@ -127,15 +127,34 @@ function SortableItem({
   )
 }
 
-function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [collectionName, setCollectionName] = useState<string>("")
-  const [collectionDescription, setCollectionDescription] = useState<string>("")
-  const [collectionColor, setCollectionColor] = useState<string>()
-  const [words, setWords] = useState<Word[]>([{ id: uuidv4(), value: "" }])
-  const [collectionIcon, setCollectionIcon] = useState<string>()
+interface UpdateCollectionDialogProps {
+  collection: Collection
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
 
-  const { addCollection } = useWordCollection()
+function UpdateCollectionDialog({
+  collection,
+  open,
+  onOpenChange,
+}: UpdateCollectionDialogProps) {
+  const [collectionName, setCollectionName] = useState<string>(collection.name || "")
+  const [collectionDescription, setCollectionDescription] = useState<string>(
+    collection.description || ""
+  )
+  const [collectionColor, setCollectionColor] = useState<string | undefined>(
+    collection.color
+  )
+  const [words, setWords] = useState<Word[]>(
+    collection.words.length > 0
+      ? [...collection.words, { id: uuidv4(), value: "" }]
+      : [{ id: uuidv4(), value: "" }]
+  )
+  const [collectionIcon, setCollectionIcon] = useState<string | undefined>(
+    collection.icon
+  )
+
+  const { updateCollection } = useWordCollection()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -143,6 +162,21 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   )
+
+  // Reset form when collection changes or dialog opens
+  useEffect(() => {
+    if (open) {
+      setCollectionName(collection.name || "")
+      setCollectionDescription(collection.description || "")
+      setCollectionColor(collection.color)
+      setCollectionIcon(collection.icon)
+      setWords(
+        collection.words.length > 0
+          ? [...collection.words, { id: uuidv4(), value: "" }]
+          : [{ id: uuidv4(), value: "" }]
+      )
+    }
+  }, [collection, open])
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -223,17 +257,9 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
     })
   }
 
-  const resetForm = () => {
-    setCollectionName("")
-    setCollectionDescription("")
-    setCollectionColor("")
-    setCollectionIcon(undefined)
-    setWords([{ id: uuidv4(), value: "" }])
-  }
-
-  const handleCreate = () => {
-    addCollection({
-      id: uuidv4(),
+  const handleUpdate = () => {
+    updateCollection(collection.id, {
+      id: collection.id,
       name: collectionName,
       description: collectionDescription,
       words: words.filter(word => word.value.trim() !== ""), // Only include non-empty words
@@ -241,28 +267,14 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
       color: collectionColor,
     })
 
-    setIsOpen(false)
-    resetForm()
+    onOpenChange(false)
   }
 
-  useEffect(() => {
-    setWords([{ id: uuidv4(), value: "" }])
-  }, [isOpen])
-
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {children || (
-          <Button variant='outline'>
-            <ListPlus className='size-4' />
-            <span>چندتایی</span>
-          </Button>
-        )}
-      </DialogTrigger>
-
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>ایجاد چندتایی جدید</DialogTitle>
+          <DialogTitle>ویرایش چندتایی</DialogTitle>
         </DialogHeader>
 
         <FieldGroup>
@@ -270,6 +282,7 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
             <FieldGroup>
               <div className='flex items-center gap-4 -mx-2'>
                 <EmojiPicker
+                  selected={collectionIcon}
                   onEmojiSelect={e => setCollectionIcon(e)}
                   className='flex items-center justify-center size-14 bg-neutral-50 text-xl'
                 />
@@ -349,8 +362,8 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
 
         <DialogFooter>
           <div className='flex justify-center gap-2 w-full'>
-            <Button onClick={handleCreate}>ایجاد</Button>
-            <Button variant='secondary' onClick={() => setIsOpen(false)}>
+            <Button onClick={handleUpdate}>ذخیره</Button>
+            <Button variant='secondary' onClick={() => onOpenChange(false)}>
               انصراف
             </Button>
           </div>
@@ -360,4 +373,5 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
   )
 }
 
-export default AddCollectionDialog
+export default UpdateCollectionDialog
+

@@ -15,6 +15,8 @@ const WordCollectionContext = createContext<{
 
   collections: Collection[]
   addCollection: (collection: Collection) => void
+  updateCollection: (id: string, collection: Collection) => void
+  deleteCollection: (id: string) => void
   searchCollectionByName: (name: string) => Collection[]
   searchWord: (word: string) => Collection[]
 }>({
@@ -31,6 +33,8 @@ const WordCollectionContext = createContext<{
 
   collections: [],
   addCollection: () => {},
+  updateCollection: () => {},
+  deleteCollection: () => {},
   searchCollectionByName: () => [],
   searchWord: () => [],
 })
@@ -89,6 +93,14 @@ export const WordCollectionProvider = ({
     setCollections([...collections, collection])
   }
 
+  const updateCollection = (id: string, collection: Collection) => {
+    setCollections(collections.map(c => (c.id === id ? collection : c)))
+  }
+
+  const deleteCollection = (id: string) => {
+    setCollections(collections.filter(c => c.id !== id))
+  }
+
   const searchCollectionByName = (name: string) => {
     return collections.filter(collection =>
       collection?.name?.toLowerCase().includes(name.toLowerCase())
@@ -135,6 +147,8 @@ export const WordCollectionProvider = ({
           // Collections
           collections,
           addCollection,
+          updateCollection,
+          deleteCollection,
           searchCollectionByName,
           searchWord,
         }}
