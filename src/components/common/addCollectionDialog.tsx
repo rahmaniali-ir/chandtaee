@@ -92,6 +92,7 @@ function SortableItem({
       )}
 
       <EmojiPicker
+        tabIndex={-1}
         disabled={isEmpty}
         onEmojiSelect={e => onIconChange(word.id, e)}
       />
@@ -105,6 +106,7 @@ function SortableItem({
       />
 
       <ColorPicker
+        tabIndex={-1}
         disabled={isEmpty}
         value={word.color}
         onChange={color => onColorChange(word.id, color)}
@@ -115,6 +117,7 @@ function SortableItem({
         size='icon'
         className='text-red-500 hover:text-red-700 hover:bg-red-50'
         disabled={isEmpty}
+        tabIndex={-1}
         onClick={() => onDelete(word.id)}
       >
         <Trash2 className='size-4' />
@@ -168,17 +171,19 @@ function AddCollectionDialog({ children }: { children?: React.ReactNode }) {
 
   const handleWordUpdate = useCallback((id: string, name: string) => {
     setWords(prevWords => {
+      // Find the word being updated to check if it was previously empty
+      const wordBeingUpdated = prevWords.find(word => word.id === id)
+      const wasEmpty = wordBeingUpdated?.value.trim() === ""
+      const nowHasContent = name.trim() !== ""
+
       const updatedWords = prevWords.map(word =>
         word.id === id ? { ...word, value: name } : word
       )
 
-      // If the last item has content and we're updating it, add a new empty item
+      // If the last item transitioned from empty to having content, add a new empty item
       const lastWord = updatedWords[updatedWords.length - 1]
-      if (lastWord && lastWord.value.trim() !== "" && lastWord.id === id) {
-        const newId = (
-          Math.max(...updatedWords.map(word => parseInt(word.id))) + 1
-        ).toString()
-        return [...updatedWords, { id: newId, value: "" }]
+      if (lastWord && lastWord.id === id && wasEmpty && nowHasContent) {
+        return [...updatedWords, { id: uuidv4(), value: "" }]
       }
 
       return updatedWords

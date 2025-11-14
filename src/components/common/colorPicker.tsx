@@ -6,10 +6,12 @@ function ColorPicker({
   value,
   disabled,
   onChange,
+  tabIndex,
 }: {
   value?: string
   disabled?: boolean
   onChange: (color?: string) => void
+  tabIndex?: number
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -17,6 +19,7 @@ function ColorPicker({
     <Button
       variant='ghost'
       size='icon'
+      tabIndex={tabIndex}
       disabled={disabled}
       onClick={() => !disabled && inputRef.current?.click()}
       onContextMenu={e => {

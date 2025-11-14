@@ -1,13 +1,13 @@
 import { useWordCollection } from "@/contexts/wordCollection"
 import { FilePlus, ListPlus } from "lucide-react"
+import { useMemo } from "react"
 import { Link } from "react-router"
 import AddCollectionDialog from "../common/addCollectionDialog"
+import AddPageDialog from "../common/addPageDialog"
 import CollectionCard from "../common/collectionCard"
 import PageCard from "../common/pageCard"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
-import AddPageDialog from "../common/addPageDialog"
-import { useEffect, useMemo } from "react"
 
 const MAX_LIST_LENGTH = 6
 
@@ -15,9 +15,16 @@ function Home() {
   const { pages, collections, searchQuery, searchWord } = useWordCollection()
 
   const filteredCollections = useMemo(() => {
-    if (searchQuery.trim().length === 0) return collections
+    if (searchQuery.trim().length === 0) {
+      const c = [...collections]
+      c.reverse()
+      return c
+    }
 
-    return searchWord(searchQuery)
+    const results = searchWord(searchQuery)
+    const r = [...results]
+    r.reverse()
+    return r
   }, [collections, searchQuery])
 
   return (

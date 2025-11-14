@@ -125,7 +125,7 @@ function AddPageDialog({ children }: { children?: React.ReactNode }) {
   const [collectionName, setCollectionName] = useState<string>("")
   const [collectionDescription, setCollectionDescription] = useState<string>("")
   const [collectionColor, setCollectionColor] = useState<string>("")
-  const [words, setWords] = useState<Word[]>([{ id: "1", value: "" }])
+  const [words, setWords] = useState<Word[]>([{ id: uuidv4(), value: "" }])
 
   const { addCollection } = useWordCollection()
 
@@ -164,17 +164,19 @@ function AddPageDialog({ children }: { children?: React.ReactNode }) {
 
   const handleWordUpdate = useCallback((id: string, name: string) => {
     setWords(prevWords => {
+      // Find the word being updated to check if it was previously empty
+      const wordBeingUpdated = prevWords.find(word => word.id === id)
+      const wasEmpty = wordBeingUpdated?.value.trim() === ""
+      const nowHasContent = name.trim() !== ""
+      
       const updatedWords = prevWords.map(word =>
         word.id === id ? { ...word, value: name } : word
       )
 
-      // If the last item has content and we're updating it, add a new empty item
+      // If the last item transitioned from empty to having content, add a new empty item
       const lastWord = updatedWords[updatedWords.length - 1]
-      if (lastWord && lastWord.value.trim() !== "" && lastWord.id === id) {
-        const newId = (
-          Math.max(...updatedWords.map(word => parseInt(word.id))) + 1
-        ).toString()
-        return [...updatedWords, { id: newId, value: "" }]
+      if (lastWord && lastWord.id === id && wasEmpty && nowHasContent) {
+        return [...updatedWords, { id: uuidv4(), value: "" }]
       }
 
       return updatedWords

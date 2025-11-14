@@ -18,7 +18,7 @@ function Navbar() {
   }
 
   return (
-    <nav className='flex items-center gap-4 px-2 py-4'>
+    <nav className='sticky top-0 z-10 bg-white rounded-b-xl flex items-center gap-4 px-2 py-4'>
       <Link
         to='/'
         className='flex items-center gap-1 text-neutral-500 transition-colors hover:text-neutral-700'

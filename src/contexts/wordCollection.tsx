@@ -1,5 +1,5 @@
 import type { Collection, Page } from "@/types/wordCollection"
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 
 const WordCollectionContext = createContext<{
   searchQuery: string
@@ -102,6 +102,17 @@ export const WordCollectionProvider = ({
       )
     )
   }
+
+  useEffect(() => {
+    const fetchDefaultDB = async () => {
+      const response = await fetch("/chandtaee/files/default-db.json")
+      const data = await response.json()
+      setPages(data.pages)
+      setCollections(data.collections)
+    }
+
+    fetchDefaultDB()
+  }, [])
 
   return (
     <div className='flex flex-col gap-4'>
