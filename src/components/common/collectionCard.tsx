@@ -1,4 +1,8 @@
+import { useWordCollection } from "@/contexts/wordCollection"
 import type { Collection } from "@/types/wordCollection"
+import { PencilIcon, Trash2Icon } from "lucide-react"
+import { useState } from "react"
+import { Button } from "../ui/button"
 import {
   Card,
   CardContent,
@@ -6,20 +10,50 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card"
-import { CollectionContextMenu } from "./collectionContextMenu"
+import { ConfirmDialog } from "./confirmDialog"
+import UpdateCollectionDialog from "./updateCollectionDialog"
 
 function CollectionCard({ collection }: { collection: Collection }) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const { deleteCollection } = useWordCollection()
+
   const hasHeader = collection.name || collection.description || collection.icon
 
+  const handleDelete = () => {
+    deleteCollection(collection.id)
+    setIsDeleteDialogOpen(false)
+  }
+
   return (
-    <CollectionContextMenu collection={collection}>
-      <Card className='gap-2 py-3'>
+    <>
+      <Card className='relative gap-2 py-3'>
+        <div className='absolute top-2 end-2 flex items-center gap-0.5'>
+          <Button
+            variant='ghost'
+            size='icon-sm'
+            className='text-neutral-400 hover:text-neutral-600'
+            onClick={() => setIsEditDialogOpen(true)}
+          >
+            <PencilIcon />
+          </Button>
+
+          <Button
+            variant='ghost'
+            size='icon-sm'
+            className='text-neutral-400 hover:text-red-600 hover:bg-red-50'
+            onClick={() => setIsDeleteDialogOpen(true)}
+          >
+            <Trash2Icon />
+          </Button>
+        </div>
+
         {hasHeader && (
           <CardHeader
             style={{
               color: collection.color,
             }}
-            className='flex items-center gap-2 px-3'
+            className='flex items-center gap-2 px-3 pe-16'
           >
             {collection.icon && (
               <span className='text-xl'>{collection.icon}</span>
@@ -56,7 +90,24 @@ function CollectionCard({ collection }: { collection: Collection }) {
           </div>
         </CardContent>
       </Card>
-    </CollectionContextMenu>
+
+      <UpdateCollectionDialog
+        collection={collection}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+      />
+
+      <ConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title='حذف چندتایی'
+        description='آیا از حذف این چندتایی اطمینان دارید؟ این عمل قابل بازگشت نیست.'
+        confirmText='حذف'
+        cancelText='انصراف'
+        onConfirm={handleDelete}
+        variant='destructive'
+      />
+    </>
   )
 }
 
